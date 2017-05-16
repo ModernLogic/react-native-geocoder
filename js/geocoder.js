@@ -5,9 +5,14 @@ const { RNGeocoder } = NativeModules;
 
 export default {
   apiKey: null,
+  useGoogle: false,
 
   fallbackToGoogle(key) {
     this.apiKey = key;
+  },
+
+  enableGoogleGeocoder() {
+    this.useGoogle = true;
   },
 
   geocodePosition(position) {
@@ -15,10 +20,18 @@ export default {
       return Promise.reject(new Error("invalid position: {lat, lng} required"));
     }
 
-    return RNGeocoder.geocodePosition(position).catch(err => {
-      if (!this.apiKey) { throw err; }
-      return GoogleApi.geocodePosition(this.apiKey, position);
-    });
+    if (this.useGoogle) {
+      return this.geocodeWithGoogle(position);
+    } else {
+      return RNGeocoder.geocodePosition(position).catch(err => {
+        return this.geocodeWithGoogle(position);
+      });
+    }
+  },
+
+  geocodeWithGoogle(position) {
+    if (!this.apiKey) { throw err; }
+    return GoogleApi.geocodePosition(this.apiKey, position);
   },
 
   geocodeAddress(address) {
