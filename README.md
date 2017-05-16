@@ -1,6 +1,6 @@
 
 
-# react-native-geocoder 
+# react-native-geocoder
 
 [![CircleCI](https://circleci.com/gh/devfd/react-native-geocoder/tree/master.svg?style=shield)](https://circleci.com/gh/devfd/react-native-geocoder/tree/master)
 
@@ -86,6 +86,30 @@ Geocoder.geocodeAddress('New York').then(res => {
 .catch(err => console.log(err))
 ```
 
+## Force to use google maps geocoding
+```
+import Geocoder from 'react-native-geocoder';
+Geocoder.setApiKey(MY_KEY);
+Geocoder.enableGoogleGeocoder()
+// Position Geocoding
+var NY = {
+  lat: 40.7809261,
+  lng: -73.9637594
+};
+
+Geocoder.geocodePosition(NY).then(res => {
+    // res is an Array of geocoding object (see below) from google maps geocoding
+})
+.catch(err => console.log(err))
+
+// Address Geocoding
+Geocoder.geocodeAddress('New York').then(res => {
+    // res is an Array of geocoding object (see below) from google maps geocoding
+})
+.catch(err => console.log(err))
+```
+
+
 ## Fallback to google maps geocoding
 
 Geocoding services might not be included in some Android devices (Kindle, some 4.1 devices, non-google devices). For those special cases the lib can fallback to the [online google maps geocoding service](https://developers.google.com/maps/documentation/geocoding/intro#Geocoding)
@@ -128,7 +152,7 @@ both iOS and Android will return the following object:
     streetName: String | null,
     postalCode: String | null,
     locality: String | null, // city name
-    country: String, 
+    country: String,
     countryCode: String
     adminArea: String | null
     subAdminArea: String | null,
@@ -143,5 +167,3 @@ iOS does not allow sending multiple geocoding requests simultaneously, hence if 
 
 ### Android
 geocoding may not work on older android devices (4.1) and will not work if Google play services are not available.
-
-

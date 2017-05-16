@@ -15,6 +15,11 @@ export default {
     this.useGoogle = true;
   },
 
+  //I will add new function to keep backward compatibility, but with more appropriate name
+  setApiKey(key) {
+    this.apiKey = key;
+  },
+
   geocodePosition(position) {
     if (!position || !position.lat || !position.lng) {
       return Promise.reject(new Error("invalid position: {lat, lng} required"));
