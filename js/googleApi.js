@@ -1,6 +1,7 @@
 import { getCenterOfBounds, getDistance } from 'geolib';
 
 export default {
+
   googleUrl: 'https://maps.googleapis.com/maps/api/geocode/json',
 
   format(raw) {
@@ -83,7 +84,7 @@ export default {
   },
 
   geocodePosition(apiKey, position, language = null) {
-    if (!apiKey || !position || !position.lat || !position.lng) {
+    if (!apiKey || !position || (!position.lat && position.lat!==0) || (!position.lng && position.lng!==0)) {
       return Promise.reject(new Error("invalid apiKey / position"));
     }
 

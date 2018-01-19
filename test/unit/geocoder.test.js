@@ -54,12 +54,16 @@ describe('geocoder', function() {
       expect(RNGeocoder.geocodePosition).to.have.been.calledWith(position);
     });
 
+
     it ('returns geocoding results with a specific language', async function() {
-      const position = {lat: 1.234, lng: 4.567};
       const language = 'ko';
       RNGeocoder.setLanguage = sinon.stub().callsArgWith(1, language);
       Geocoder.setLanguage(language);
       expect(RNGeocoder.setLanguage).to.have.been.calledWith(language);
+    });
+
+    it ('returns geocoding results with 0 lat and lng', async function() {
+      const position = {lat: 0, lng: 0};
       await Geocoder.geocodePosition(position);
       expect(RNGeocoder.geocodePosition).to.have.been.calledWith(position);
     });
