@@ -109,7 +109,9 @@ RCT_EXPORT_METHOD(geocodeAddress:(NSString *)address
      @"postalCode": placemark.postalCode ?: [NSNull null],
      @"adminArea": placemark.administrativeArea ?: [NSNull null],
      @"subAdminArea": placemark.subAdministrativeArea ?: [NSNull null],
-     @"formattedAddress": [lines componentsJoinedByString:@", "] ?: [NSNull null]
+     @"formattedAddress": [lines componentsJoinedByString:@", "] ?: [NSNull null],
+     @"inlandWater": placemark.inlandWater ?: [NSNull null],
+     @"ocean": placemark.ocean ?: [NSNull null]
    };
 
     [results addObject:result];
