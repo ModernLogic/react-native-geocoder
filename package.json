@@ -27,6 +27,9 @@
   },
   "homepage": "https://github.com/devfd/react-native-geocoder",
   "license": "MIT",
+  "peerDependencies": {
+    "react-native": ">=0.56.0"
+  },
   "devDependencies": {
     "appium": "^1.5.3",
     "babel-core": "^6.11.4",
