@@ -12,6 +12,7 @@
 
   double lat = [RCTConvert double:json[@"lat"]];
   double lng = [RCTConvert double:json[@"lng"]];
+
   return [[CLLocation alloc] initWithLatitude:lat longitude:lng];
 }
 
@@ -22,15 +23,18 @@
 
 RCT_EXPORT_MODULE();
 
+- (NSLocale*) locale {
+  return _locale ?: [NSLocale currentLocale];
+}
+
 RCT_EXPORT_METHOD(setLanguage:(NSString *)language
                   callback:(RCTResponseSenderBlock)callback)
 {
-  NSString *deviceLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-  if ([deviceLanguage isEqualToString:language]) {
-    return callback(@[[NSNull null]]);
+  NSLocale *geocoderLocale = [[NSLocale alloc] initWithLocaleIdentifier:locale];
+  if (geocoderLocale) {
+    self.locale = geocoderLocale;
   }
-
-  callback(@[language]);
+  callback(@[self.locale.localeIdentifier]);
 }
 
 RCT_EXPORT_METHOD(geocodePosition:(CLLocation *)location
@@ -45,19 +49,22 @@ RCT_EXPORT_METHOD(geocodePosition:(CLLocation *)location
     [self.geocoder cancelGeocode];
   }
 
-  [self.geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+  NSLocale *geocoderLocale = self.locale;
 
-    if (error) {
-      if (placemarks.count == 0) {
-          return reject(@"NOT_FOUND", @"geocodePosition failed", error);
-      }
-
-      return reject(@"ERROR", @"geocodePosition failed", error);
+    id completionHandler = ^(NSArray *placemarks, NSError *error) {
+        if (error) {
+            if (placemarks.count == 0) {
+                return reject(@"NOT_FOUND", @"geocodePosition failed", error);
+            }
+            return reject(@"ERROR", @"geocodePosition failed", error);
+        }
+        resolve([self placemarksToDictionary:placemarks]);
+    };
+    if (@available(iOS 11.0, *)) {
+        [self.geocoder reverseGeocodeLocation:location preferredLocale:geocoderLocale completionHandler:completionHandler];
+    } else {
+        [self.geocoder reverseGeocodeLocation:location completionHandler:completionHandler];
     }
-
-    resolve([self placemarksToDictionary:placemarks]);
-
-  }];
 }
 
 RCT_EXPORT_METHOD(geocodeAddress:(NSString *)address

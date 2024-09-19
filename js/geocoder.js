@@ -5,7 +5,7 @@ const { RNGeocoder } = NativeModules;
 
 export default {
   apiKey: null,
-  language: null,
+  language: 'en',
   useGoogle: false,
 
   fallbackToGoogle(key) {
@@ -42,10 +42,6 @@ export default {
   geocodePosition(position) {
     if (!position || (!position.lat && position.lat!==0) || (!position.lng && position.lng!==0)) {
       return Promise.reject(new Error("invalid position: {lat, lng} required"));
-    }
-
-    if (this.language && (Platform.OS === 'ios')) {
-      return this.geocodePositionFallback(position);
     }
 
     if (this.useGoogle) {

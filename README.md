@@ -142,9 +142,16 @@ Geocoder.fallbackToGoogle(MY_KEY);
 
 // use the lib as usual
 let ret = await Geocoder.geocodePosition({lat, lng})
+
+const locale = 'en'; // Two symbol locale code.
+let ret = await Geocoder.geocodePosition({lat, lng}, locale);
+
 // you get the same results
 
 ```
+
+By default `locale` is 'en'.
+
 
 ## With async / await
 ```

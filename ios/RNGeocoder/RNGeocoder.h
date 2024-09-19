@@ -9,4 +9,5 @@
 
 @interface RNGeocoder : NSObject<RCTBridgeModule>
 @property (nonatomic, strong) CLGeocoder *geocoder;
+@property (nonatomic, strong) NSLocale *locale;
 @end
