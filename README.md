@@ -143,7 +143,7 @@ catch(err) {
 ```
 
 ## Geocoding object format
-both iOS and Android will return the following object:
+Android will return the following object:
 
 ```js
 {
@@ -163,6 +163,15 @@ both iOS and Android will return the following object:
     adminArea: String | null
     subAdminArea: String | null,
     subLocality: String | null
+}
+```
+
+iOS will return that same object plus water feature data:
+
+```js
+{
+    ocean: String | null,
+    inlandWater: String | null
 }
 ```
 
