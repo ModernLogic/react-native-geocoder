@@ -1,0 +1,15 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "NodeNext",
+    "declaration": true,
+    "outDir": "./dist/",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["./index.ts", "src"],
+  "exclude": ["node_modules", "dist"]
+}

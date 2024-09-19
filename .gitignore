@@ -46,6 +46,7 @@ google-services.json
 # Generated files
 bin/
 gen/
+dist/
 
 # Gradle files
 .idea

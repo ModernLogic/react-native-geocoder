@@ -1,30 +1,38 @@
 import { NativeModules, Platform } from 'react-native';
 import GoogleApi from './googleApi.js';
-
 const { RNGeocoder } = NativeModules;
 
+export type GeoPosition = {
+  lat: number;
+  lng: number;
+};
+
+type ErrorType = {
+  code: string
+}
+
 export default {
-  apiKey: null,
+  apiKey: null as null | string,
   language: 'en',
   useGoogle: false,
 
-  fallbackToGoogle(key) {
+  fallbackToGoogle(key: string) {
     this.apiKey = key;
   },
 
-  setLanguage(language) {
-    RNGeocoder.setLanguage(language, (result) => {
+  setLanguage(language: string) {
+    RNGeocoder.setLanguage(language, (result: string) => {
       this.language = result;
     });
   },
 
-  geocodePositionFallback(position) {
+  geocodePositionFallback(position: GeoPosition) {
     if (!this.apiKey) { throw new Error("Google API key required"); }
 
     return GoogleApi.geocodePosition(this.apiKey, position, this.language);
   },
 
-  geocodeAddressFallback(address) {
+  geocodeAddressFallback(address: string) {
     if (!this.apiKey) { throw new Error("Google API key required"); }
 
     return GoogleApi.geocodeAddress(this.apiKey, address, this.language);
@@ -34,12 +42,11 @@ export default {
     this.useGoogle = true;
   },
 
-  //I will add new function to keep backward compatibility, but with more appropriate name
-  setApiKey(key) {
+  setApiKey(key: string) {
     this.apiKey = key;
   },
 
-  geocodePosition(position) {
+  geocodePosition(position: GeoPosition) {
     if (!position || (!position.lat && position.lat!==0) || (!position.lng && position.lng!==0)) {
       return Promise.reject(new Error("invalid position: {lat, lng} required"));
     }
@@ -47,14 +54,14 @@ export default {
     if (this.useGoogle) {
       return this.geocodePositionFallback(position);
     } else {
-      return RNGeocoder.geocodePosition(position).catch(err => {
+      return RNGeocoder.geocodePosition(position).catch((err: ErrorType) => {
         if (err.code !== 'NOT_AVAILABLE') { throw err; }
         return this.geocodePositionFallback(position);
       });
     }
   },
 
-  geocodeAddress(address) {
+  geocodeAddress(address: string) {
     if (!address) {
       return Promise.reject(new Error("address is null"));
     }
@@ -63,7 +70,7 @@ export default {
       return this.geocodeAddressFallback(address);
     }
 
-    return RNGeocoder.geocodeAddress(address).catch(err => {
+    return RNGeocoder.geocodeAddress(address).catch((err: ErrorType) => {
       if (err.code !== 'NOT_AVAILABLE') { throw err; }
       return this.geocodeAddressFallback(address);
     });

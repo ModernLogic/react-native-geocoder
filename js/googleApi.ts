@@ -4,10 +4,10 @@ export default {
 
   googleUrl: 'https://maps.googleapis.com/maps/api/geocode/json',
 
-  format(raw) {
+  format(raw: any) {
     const address = {
       position: {},
-      region: null,
+      region: null as null | { center: { lat: number, lng: number }, radius: number },
       formattedAddress: raw.formatted_address || '',
       feature: null,
       streetNumber: null,
@@ -49,7 +49,7 @@ export default {
       }
     }
 
-    raw.address_components.forEach(component => {
+    raw.address_components.forEach((component: any) => {
       if (component.types.indexOf('route') !== -1) {
         address.streetName = component.long_name;
       }
@@ -83,7 +83,7 @@ export default {
     return address;
   },
 
-  geocodePosition(apiKey, position, language = null) {
+  geocodePosition(apiKey: string, position: null | { lat?: number| null, lng?: number | null }, language: string | null = null) {
     if (!apiKey || !position || (!position.lat && position.lat!==0) || (!position.lng && position.lng!==0)) {
       return Promise.reject(new Error("invalid apiKey / position"));
     }
@@ -96,7 +96,7 @@ export default {
     return this.geocodeRequest(url);
   },
 
-  geocodeAddress(apiKey, address, language = null) {
+  geocodeAddress(apiKey: string, address: string, language: string | null = null) {
     if (!apiKey || !address) {
       return Promise.reject(new Error("invalid apiKey / address"));
     }
@@ -109,7 +109,7 @@ export default {
     return this.geocodeRequest(url);
   },
 
-  async geocodeRequest(url) {
+  async geocodeRequest(url: string) {
     const res = await fetch(url);
     const json = await res.json();
 

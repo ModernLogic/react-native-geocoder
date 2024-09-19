@@ -1,13 +1,13 @@
 require('babel-core/register')({
   presets: ["react-native"]
 });
-require("babel-polyfill");
+import "babel-polyfill";
 
-require('colors');
+import 'colors';
 
-var chai = require("chai");
-var sinon = require("sinon");
-var sinonChai = require("sinon-chai");
-chai.use(sinonChai);
+import { use, expect } from "chai";
+import sinon from "sinon";
+import sinonChai from "sinon-chai";
+use(sinonChai);
 
-global.expect = chai.expect;
+global.expect = expect;
