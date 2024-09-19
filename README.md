@@ -88,6 +88,30 @@ Geocoder.geocodeAddress('New York').then(res => {
 .catch(err => console.log(err))
 ```
 
+## Force to use google maps geocoding
+```
+import Geocoder from 'react-native-geocoder';
+Geocoder.setApiKey(MY_KEY);
+Geocoder.enableGoogleGeocoder()
+// Position Geocoding
+var NY = {
+  lat: 40.7809261,
+  lng: -73.9637594
+};
+
+Geocoder.geocodePosition(NY).then(res => {
+    // res is an Array of geocoding object (see below) from google maps geocoding
+})
+.catch(err => console.log(err))
+
+// Address Geocoding
+Geocoder.geocodeAddress('New York').then(res => {
+    // res is an Array of geocoding object (see below) from google maps geocoding
+})
+.catch(err => console.log(err))
+```
+
+
 ## Fallback to google maps geocoding
 
 Geocoding services might not be included in some Android devices (Kindle, some 4.1 devices, non-google devices). For those special cases the lib can fallback to the [online google maps geocoding service](https://developers.google.com/maps/documentation/geocoding/intro#Geocoding)
