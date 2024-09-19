@@ -11,6 +11,7 @@ describe('geocoder', function() {
     };
 
     RNGeocoder = {
+      setLanguage: sinon.stub().callsArgWith(1, null),
       geocodePosition: sinon.stub().returns(Promise.resolve()),
       geocodeAddress: sinon.stub().returns(Promise.resolve()),
     };
@@ -21,6 +22,7 @@ describe('geocoder', function() {
         './googleApi.js': GoogleApi,
         'react-native': {
           NativeModules: { RNGeocoder },
+          Platform: { OS: 'android' },
         }
       }).default;
   });
@@ -52,6 +54,16 @@ describe('geocoder', function() {
       expect(RNGeocoder.geocodePosition).to.have.been.calledWith(position);
     });
 
+    it ('returns geocoding results with a specific language', async function() {
+      const position = {lat: 1.234, lng: 4.567};
+      const language = 'ko';
+      RNGeocoder.setLanguage = sinon.stub().callsArgWith(1, language);
+      Geocoder.setLanguage(language);
+      expect(RNGeocoder.setLanguage).to.have.been.calledWith(language);
+      await Geocoder.geocodePosition(position);
+      expect(RNGeocoder.geocodePosition).to.have.been.calledWith(position);
+    });
+
     it ('does not call google api if no apiKey', function() {
       const position = {lat: 1.234, lng: 4.567};
       RNGeocoder.geocodePosition = sinon.stub().returns(Promise.reject());
@@ -64,6 +76,27 @@ describe('geocoder', function() {
     it ('fallbacks to google api when not available', async function() {
       const position = {lat: 1.234, lng: 4.567};
       RNGeocoder.geocodePosition = sinon.stub().returns(Promise.reject({code: 'NOT_AVAILABLE'}));
+      Geocoder.fallbackToGoogle('myGoogleMapsAPIKey');
+      const ret = await Geocoder.geocodePosition(position);
+      expect(GoogleApi.geocodePosition).to.have.been.calledWith('myGoogleMapsAPIKey', position);
+      expect(ret).to.eql('google');
+    });
+
+    it ('fallbacks to google api when with a specific language on iOS', async function() {
+      Geocoder = proxyquire
+        .noCallThru()
+        .load('../../js/geocoder.js', {
+          './googleApi.js': GoogleApi,
+          'react-native': {
+            NativeModules: { RNGeocoder },
+            Platform: { OS: 'ios' },
+          }
+        }).default;
+      const position = {lat: 1.234, lng: 4.567};
+      const language = 'ko';
+      RNGeocoder.setLanguage = sinon.stub().callsArgWith(1, language);
+      Geocoder.setLanguage(language);
+      expect(RNGeocoder.setLanguage).to.have.been.calledWith(language);
       Geocoder.fallbackToGoogle('myGoogleMapsAPIKey');
       const ret = await Geocoder.geocodePosition(position);
       expect(GoogleApi.geocodePosition).to.have.been.calledWith('myGoogleMapsAPIKey', position);

@@ -1,8 +1,10 @@
 package com.devfd.RNGeocoder;
 
+import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -15,19 +17,39 @@ import com.facebook.react.bridge.WritableNativeMap;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class RNGeocoderModule extends ReactContextBaseJavaModule {
 
+    private Context context;
+    private Locale locale;
     private Geocoder geocoder;
 
     public RNGeocoderModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        geocoder = new Geocoder(reactContext.getApplicationContext());
+        context = reactContext.getApplicationContext();
+
+        locale = context.getResources().getConfiguration().locale;
+        geocoder = new Geocoder(context, locale);
     }
 
     @Override
     public String getName() {
         return "RNGeocoder";
+    }
+
+    @ReactMethod
+    public void setLanguage(String language, Callback callback) {
+        Locale target = new Locale(language);
+        if (!context.getResources().getConfiguration().locale.equals(target) && !locale.equals(target)) {
+          locale = target;
+          geocoder = new Geocoder(context, locale);
+
+          callback.invoke(language);
+          return;
+        }
+
+        callback.invoke((String) null);
     }
 
     @ReactMethod
@@ -39,7 +61,12 @@ public class RNGeocoderModule extends ReactContextBaseJavaModule {
 
         try {
             List<Address> addresses = geocoder.getFromLocationName(addressName, 20);
-            promise.resolve(transform(addresses));
+            if(addresses != null && addresses.size() > 0) {
+                promise.resolve(transform(addresses));
+            } else {
+                promise.reject("NOT_AVAILABLE", "Geocoder returned an empty list");
+            }
+
         }
 
         catch (IOException e) {
@@ -73,6 +100,9 @@ public class RNGeocoderModule extends ReactContextBaseJavaModule {
             position.putDouble("lat", address.getLatitude());
             position.putDouble("lng", address.getLongitude());
             result.putMap("position", position);
+
+            // There is no region field in the `Address` object.
+            result.putString("region", null);
 
             final String feature_name = address.getFeatureName();
             if (feature_name != null && !feature_name.equals(address.getSubThoroughfare()) &&

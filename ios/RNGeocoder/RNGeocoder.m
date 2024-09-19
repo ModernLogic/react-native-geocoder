@@ -22,6 +22,17 @@
 
 RCT_EXPORT_MODULE();
 
+RCT_EXPORT_METHOD(setLanguage:(NSString *)language
+                  callback:(RCTResponseSenderBlock)callback)
+{
+  NSString *deviceLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+  if ([deviceLanguage isEqualToString:language]) {
+    return callback(@[[NSNull null]]);
+  }
+
+  callback(@[language]);
+}
+
 RCT_EXPORT_METHOD(geocodePosition:(CLLocation *)location
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
@@ -81,6 +92,7 @@ RCT_EXPORT_METHOD(geocodeAddress:(NSString *)address
 
   for (int i = 0; i < placemarks.count; i++) {
     CLPlacemark* placemark = [placemarks objectAtIndex:i];
+    CLCircularRegion* region = placemark.region;
 
     NSString* name = [NSNull null];
 
@@ -100,6 +112,13 @@ RCT_EXPORT_METHOD(geocodeAddress:(NSString *)address
          @"lat": [NSNumber numberWithDouble:placemark.location.coordinate.latitude],
          @"lng": [NSNumber numberWithDouble:placemark.location.coordinate.longitude],
          },
+     @"region": placemark.region ? @{
+         @"center": @{
+             @"lat": [NSNumber numberWithDouble:region.center.latitude],
+             @"lng": [NSNumber numberWithDouble:region.center.longitude],
+             },
+         @"radius": [NSNumber numberWithDouble:region.radius],
+         } : [NSNull null],
      @"country": placemark.country ?: [NSNull null],
      @"countryCode": placemark.ISOcountryCode ?: [NSNull null],
      @"locality": placemark.locality ?: [NSNull null],
