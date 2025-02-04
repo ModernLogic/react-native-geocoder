@@ -66,10 +66,6 @@ export default {
       return Promise.reject(new Error("address is null"));
     }
 
-    if (this.language && (Platform.OS === 'ios')) {
-      return this.geocodeAddressFallback(address);
-    }
-
     return RNGeocoder.geocodeAddress(address).catch((err: ErrorType) => {
       if (err.code !== 'NOT_AVAILABLE') { throw err; }
       return this.geocodeAddressFallback(address);

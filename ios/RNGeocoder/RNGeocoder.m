@@ -30,7 +30,7 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(setLanguage:(NSString *)language
                   callback:(RCTResponseSenderBlock)callback)
 {
-  NSLocale *geocoderLocale = [[NSLocale alloc] initWithLocaleIdentifier:locale];
+  NSLocale *geocoderLocale = [[NSLocale alloc] initWithLocaleIdentifier:[self locale]];
   if (geocoderLocale) {
     self.locale = geocoderLocale;
   }

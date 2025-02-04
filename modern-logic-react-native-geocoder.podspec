@@ -3,7 +3,7 @@ package = JSON.parse(File.read("package.json"))
 
 Pod::Spec.new do |s|
 
-  s.name           = package["name"]
+  s.name           = "modern-logic-react-native-geocoder"
   s.version        = package["version"]
   s.summary        = package['description']
   s.author         = { "Andrew Rahn" => "andy@modernlogic.io" }
