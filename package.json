@@ -1,6 +1,6 @@
 {
-  "name": "@modernlogic/react-native-geocoder",
-  "version": "0.6.0+7",
+  "name": "@modern-logic/react-native-geocoder",
+  "version": "0.6.1",
   "description": "react native geocoding and reverse geocoding",
   "main": "./dist/commonjs/index.js",
   "scripts": {
