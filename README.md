@@ -1,4 +1,5 @@
 
+NOTE: Modern Logic's fork of this repo has been archived, as none of our client projects use this technology.
 
 # react-native-geocoder
 
